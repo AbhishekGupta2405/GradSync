@@ -6,8 +6,8 @@ spring:
     name: job-service
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/gradsync_job_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:gradsync_root_password}
+    username: ${SPRING_DATASOURCE_USERNAME:gradsync_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:gradsync_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

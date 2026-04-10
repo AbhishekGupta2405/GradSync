@@ -1,0 +1,63 @@
+# ==================================
+# Node / Frontend (React & Vite)
+# ==================================
+node_modules/
+/frontend/dist/
+/frontend/dist-ssr/
+*.local
+
+# ==================================
+# Java / Spring Boot / Maven
+# ==================================
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# ==================================
+# Environment Variables & Secrets
+# ==================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==================================
+# IDE / Editor Folders
+# ==================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.orig
+
+# ==================================
+# Logs & Databases
+# ==================================
+*.log
+*.err
+*.sql.gz
+*.sqlite
+/gradsync-backend/mysql-data/
+
+# ==================================
+# Build & Temporary Files
+# ==================================
+*.zip
+*.tar.gz
+*.tmp
+*.bak
+
+# ==================================
+# OS Generated Files
+# ==================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

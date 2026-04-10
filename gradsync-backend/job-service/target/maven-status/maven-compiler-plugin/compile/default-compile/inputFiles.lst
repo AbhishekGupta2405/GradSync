@@ -1,7 +1,7 @@
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\controller\CascadeDeletionController.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\entity\Application.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\repository\ApplicationRepository.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\repository\JobRepository.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\entity\Job.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\JobServiceApplication.java
-D:\Gradsync2.0\gradsync-backend\job-service\src\main\java\com\gradsync\job\controller\JobController.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\controller\JobController.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\repository\ApplicationRepository.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\repository\JobRepository.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\controller\CascadeDeletionController.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\entity\Application.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\entity\Job.java
+D:\Gradsync\gradsync-backend\job-service\src\main\java\com\gradsync\job\JobServiceApplication.java

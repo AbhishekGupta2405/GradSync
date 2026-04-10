@@ -10,6 +10,10 @@ services:
       - "3307:3306"
     env_file:
       - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-gradsync_root_password}
+      - MYSQL_USER=${MYSQL_USER:-gradsync_user}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
     volumes:
       # Persistent storage for database data
       - mysql-data:/var/lib/mysql
@@ -32,9 +36,11 @@ services:
       - "8081:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_auth_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
       - LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID}
       - LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET}
-      - LINKEDIN_REDIRECT_URI=http://localhost:5173/auth/linkedin/callback
+      - LINKEDIN_REDIRECT_URI=${LINKEDIN_REDIRECT_URI:-http://localhost:5173/auth/linkedin/callback}
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -50,6 +56,8 @@ services:
       - "8082:8082"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
@@ -60,6 +68,21 @@ services:
     networks:
       - gradsync-net
 
+  # Cache (Redis)
+  # Used for API Gateway Rate Limiting to prevent DDoS
+  redis-cache:
+    image: redis:alpine
+    container_name: gradsync-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - gradsync-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # 4. API Gateway (BFF)
   api-gateway:
     build:
@@ -67,13 +90,25 @@ services:
     container_name: gradsync-gateway
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATA_REDIS_HOST=redis-cache
+      - SPRING_DATA_REDIS_PORT=6379
+      - CORS_ALLOWED_ORIGIN=${CORS_ALLOWED_ORIGIN:-http://localhost:5173}
     depends_on:
-      - auth-service
-      - user-service
-      - job-service
-      - post-service
-      - events-service
-      - stats-service
+      redis-cache:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      job-service:
+        condition: service_started
+      post-service:
+        condition: service_started
+      events-service:
+        condition: service_started
+      stats-service:
+        condition: service_started
     networks:
       - gradsync-net
 
@@ -86,8 +121,8 @@ services:
       - "8083:8083"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_job_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=gradsync_user
-      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -103,17 +138,15 @@ services:
       - "8084:8084"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_post_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=gradsync_user
-      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
     depends_on:
       mysql-db:
         condition: service_healthy
     networks:
       - gradsync-net
 
-
-
-  # 8. Events Service
+  # 7. Events Service
   events-service:
     build:
       context: ./events-service
@@ -122,15 +155,15 @@ services:
       - "8086:8086"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_events_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=gradsync_user
-      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
     depends_on:
       mysql-db:
         condition: service_healthy
     networks:
       - gradsync-net
 
-  # 9. Stats Service
+  # 8. Stats Service
   stats-service:
     build:
       context: ./stats-service
@@ -139,14 +172,28 @@ services:
       - "8087:8087"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_stats_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=gradsync_user
-      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER:-gradsync_user}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD:-gradsync_password}
     depends_on:
       mysql-db:
         condition: service_healthy
     networks:
       - gradsync-net
 
+  # 9. Frontend (Nginx)
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8080}
+    container_name: gradsync-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - gradsync-net
 
 volumes:
   mysql-data:

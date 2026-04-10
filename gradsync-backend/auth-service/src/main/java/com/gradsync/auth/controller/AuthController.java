@@ -10,6 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpHeaders;
 import java.util.Map;
 
 @RestController
@@ -22,16 +25,22 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @Valid @RequestBody RegisterRequest request
+            @Valid @RequestBody RegisterRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(service.register(request));
+        AuthenticationResponse authResponse = service.register(request);
+        addCookie(response, authResponse.getToken());
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse authResponse = service.authenticate(request);
+        addCookie(response, authResponse.getToken());
+        return ResponseEntity.ok(authResponse);
     }
     
     @GetMapping("/validate")
@@ -46,8 +55,37 @@ public class AuthController {
     }
 
     @PostMapping("/linkedin/callback")
-    public ResponseEntity<AuthenticationResponse> linkedInCallback(@RequestBody LinkedInCallbackRequest request) {
-        return ResponseEntity.ok(linkedInOAuthService.handleCallback(request));
+    public ResponseEntity<AuthenticationResponse> linkedInCallback(
+            @RequestBody LinkedInCallbackRequest request,
+            HttpServletResponse response
+    ) {
+        AuthenticationResponse authResponse = linkedInOAuthService.handleCallback(request);
+        addCookie(response, authResponse.getToken());
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("gradsync_token", "")
+                .httpOnly(true)
+                .secure(false) // HTTP instead of HTTPS since localhost Vite runs on HTTP
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
+    private void addCookie(HttpServletResponse response, String token) {
+        ResponseCookie cookie = ResponseCookie.from("gradsync_token", token)
+                .httpOnly(true)
+                .secure(false) // HTTP instead of HTTPS since localhost Vite runs on HTTP
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)

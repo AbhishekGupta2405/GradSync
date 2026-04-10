@@ -1,5 +1,12 @@
-D:\Gradsync2.0\gradsync-backend\post-service\src\main\java\com\gradsync\post\entity\Post.java
-D:\Gradsync2.0\gradsync-backend\post-service\src\main\java\com\gradsync\post\repository\PostRepository.java
-D:\Gradsync2.0\gradsync-backend\post-service\src\main\java\com\gradsync\post\controller\CascadeDeletionController.java
-D:\Gradsync2.0\gradsync-backend\post-service\src\main\java\com\gradsync\post\controller\PostController.java
-D:\Gradsync2.0\gradsync-backend\post-service\src\main\java\com\gradsync\post\PostServiceApplication.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\entity\PostLike.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\entity\Post.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\repository\PostRepository.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\entity\Comment.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\controller\PostController.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\PostServiceApplication.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\repository\CommentRepository.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\service\PostService.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\controller\CascadeDeletionController.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\dto\CommentDto.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\dto\PostDto.java
+D:\Gradsync\gradsync-backend\post-service\src\main\java\com\gradsync\post\repository\PostLikeRepository.java

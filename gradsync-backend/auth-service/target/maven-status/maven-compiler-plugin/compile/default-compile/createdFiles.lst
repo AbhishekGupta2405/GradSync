@@ -1,8 +1,10 @@
 com\gradsync\auth\controller\AuthController.class
+com\gradsync\auth\service\LinkedInOAuthService.class
 com\gradsync\auth\dto\AuthenticationRequest.class
 com\gradsync\auth\AuthServiceApplication.class
 com\gradsync\auth\service\JwtService.class
 com\gradsync\auth\dto\RegisterRequest.class
+com\gradsync\auth\dto\LinkedInCallbackRequest.class
 com\gradsync\auth\entity\User$UserBuilder.class
 com\gradsync\auth\security\SecurityConfig.class
 com\gradsync\auth\repository\UserRepository.class
@@ -15,4 +17,5 @@ com\gradsync\auth\dto\RegisterRequest$RegisterRequestBuilder.class
 com\gradsync\auth\controller\AdminAuthController.class
 com\gradsync\auth\service\AuthenticationService.class
 com\gradsync\auth\entity\Role.class
+com\gradsync\auth\dto\LinkedInUserInfo.class
 com\gradsync\auth\dto\AuthenticationRequest$AuthenticationRequestBuilder.class

@@ -29,6 +29,9 @@ public class Post {
     @Column(length = 500)
     private String link;
 
+    @Column(length = 1000)
+    private String mediaUrl;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

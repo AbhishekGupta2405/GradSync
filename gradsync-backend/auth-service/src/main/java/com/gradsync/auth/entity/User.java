@@ -31,6 +31,7 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String linkedinId;
 
+    @Builder.Default
     @Column(nullable = false)
     private String authProvider = "LOCAL";
 

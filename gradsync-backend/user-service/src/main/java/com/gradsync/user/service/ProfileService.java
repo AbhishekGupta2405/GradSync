@@ -33,7 +33,16 @@ public class ProfileService {
         profile.setBranch(profileDto.getBranch());
         profile.setHeadline(profileDto.getHeadline());
         profile.setBio(profileDto.getBio());
-        profile.setProfileImageUrl(profileDto.getProfileImageUrl());
+        
+        // SAFEGUARD: Do not save temporary S3 Presigned URLs back to the DB!
+        String incomingUrl = profileDto.getProfileImageUrl();
+        if (incomingUrl != null && incomingUrl.contains("X-Amz-Algorithm")) {
+            // Keep the raw S3 Key already in the database
+            profile.setProfileImageUrl(profile.getProfileImageUrl());
+        } else {
+            profile.setProfileImageUrl(incomingUrl);
+        }
+        
         profile.setLocation(profileDto.getLocation());
         profile.setCurrentCompany(profileDto.getCurrentCompany());
         profile.setPosition(profileDto.getPosition());

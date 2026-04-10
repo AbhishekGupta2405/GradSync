@@ -1,0 +1,50 @@
+# Production Docker Compose Override
+# Uses RDS instead of the local MySQL Docker container
+#
+# Run with:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# This file ONLY overrides the database URLs for each service.
+# All other settings come from docker-compose.yml
+
+services:
+  # Disable the MySQL Docker container — RDS handles this in production
+  mysql-db:
+    deploy:
+      replicas: 0
+
+  auth-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_auth_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
+  user-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_user_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
+  job-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_job_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
+  post-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_post_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
+  events-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_events_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+
+  stats-service:
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${RDS_ENDPOINT}:3306/gradsync_stats_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}

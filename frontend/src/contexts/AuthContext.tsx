@@ -34,7 +34,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   register: (userData: RegisterData) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   loginWithLinkedIn: (code: string, role?: string) => Promise<void>
 }
 
@@ -79,8 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const authData: any = await authAPI.login(email, password)
       
       if (authData.token && authData.userId) {
-        // Set token first so getProfile is authorized
-        localStorage.setItem('gradsync_token', authData.token)
+        // Token is now set securely via HttpOnly cookie by the backend
         
         let profileData: any = {}
         try {
@@ -129,8 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       
       if (authData.token && authData.userId) {
-        // 2. Set tokens
-        localStorage.setItem('gradsync_token', authData.token)
+        // Token is set securely via HttpOnly cookie by backend
 
         // 3. Create Profile
         const profileData: any = await userAPI.createOrUpdateProfile(authData.userId, {
@@ -173,11 +171,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await authAPI.logout()
+    } catch (error) {
+      console.error('Backend logout failed:', error)
+    }
     setUser(null)
     localStorage.removeItem('gradsync_user')
-    localStorage.removeItem('gradsync_token')
-    localStorage.removeItem('gradsync_refresh_token')
   }
 
   const loginWithLinkedIn = async (code: string, role?: string) => {
@@ -186,7 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const authData: any = await authAPI.linkedInCallback(code, role)
 
       if (authData.token && authData.userId) {
-        localStorage.setItem('gradsync_token', authData.token)
+        // Token is securely handled by HttpOnly cookie
         
         let profileData: any = {}
         if (authData.newUser) {

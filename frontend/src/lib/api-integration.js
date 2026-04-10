@@ -1,7 +1,7 @@
 // API Integration for GradSync - Connect to real NBA 2025 data
 // Replace the mock data in your components with these API calls
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api';
 
 // Get JWT token from localStorage (set after login)
 const getAuthToken = () => {

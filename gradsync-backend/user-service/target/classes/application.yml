@@ -3,10 +3,11 @@ spring:
     name: user-service
   
   datasource:
-    # Connects to our central Docker database on port 3307 inside the gradsync_user_db namespace
-    url: jdbc:mysql://localhost:3307/gradsync_user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: gradsync_user
-    password: gradsync_password
+    # Uses Docker env var SPRING_DATASOURCE_URL when running in container,
+    # falls back to localhost:3307 for local development
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/gradsync_user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:gradsync_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:gradsync_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

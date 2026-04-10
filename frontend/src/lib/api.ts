@@ -1,23 +1,10 @@
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
-// Get auth token from localStorage
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('gradsync_token')
-}
-
-// Create headers with auth token
-const createHeaders = (includeAuth = false): HeadersInit => {
+// Create basic headers
+const createHeaders = (): HeadersInit => {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   }
-  
-  if (includeAuth) {
-    const token = getAuthToken()
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
-    }
-  }
-  
   return headers
 }
 
@@ -28,10 +15,11 @@ const apiRequest = async <T>(
   includeAuth = false
 ): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`
-  const headers = createHeaders(includeAuth)
+  const headers = createHeaders()
   
   const config: RequestInit = {
     ...options,
+    credentials: 'include', // Automatically attach HttpOnly cookies
     headers: {
       ...headers,
       ...options.headers,
@@ -80,10 +68,14 @@ export const authAPI = {
   refreshToken: (refreshToken: string) =>
     apiRequest('/api/auth/refresh', {
       method: 'POST',
-      body: JSON.stringify({ refreshToken }),
     }),
     
-  validateToken: (token: string) =>
+  logout: () =>
+    apiRequest('/api/v1/auth/logout', {
+      method: 'POST',
+    }),
+    
+  validateToken: () =>
     apiRequest('/api/auth/validate', {
       method: 'POST',
       body: JSON.stringify({ token }),
@@ -169,15 +161,12 @@ export const profileImageAPI = {
     const formData = new FormData()
     formData.append('file', file)
     
-    const token = getAuthToken()
     const headers: HeadersInit = {}
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
-    }
     
     return fetch(`${API_BASE_URL}/api/v1/profiles/${userId}/image`, {
       method: 'POST',
       headers,
+      credentials: 'include',
       body: formData,
     }).then(response => {
       if (!response.ok) {
@@ -199,15 +188,12 @@ export const storageAPI = {
     const formData = new FormData()
     formData.append('file', file)
     
-    const token = getAuthToken()
     const headers: HeadersInit = {}
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
-    }
     
     return fetch(`${API_BASE_URL}/api/v1/profiles/storage/upload?folder=${folder}`, {
       method: 'POST',
       headers,
+      credentials: 'include',
       body: formData,
     }).then(res => {
       if (!res.ok) {
@@ -268,6 +254,25 @@ export const postAPI = {
   deletePost: (id: string | number) => {
     return apiRequest(`/api/v1/posts/${id}`, {
       method: 'DELETE',
+    }, true)
+  },
+  
+  toggleLike: (id: string | number) => {
+    return apiRequest<{ liked: boolean }>(`/api/v1/posts/${id}/like`, {
+      method: 'POST',
+    }, true)
+  },
+  
+  getComments: (id: string | number) => {
+    return apiRequest(`/api/v1/posts/${id}/comments`, {
+      method: 'GET',
+    }, true)
+  },
+  
+  addComment: (id: string | number, content: string) => {
+    return apiRequest(`/api/v1/posts/${id}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
     }, true)
   }
 }

@@ -6,8 +6,8 @@ spring:
     name: events-service
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/gradsync_events_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: root
-    password: password
+    username: ${SPRING_DATASOURCE_USERNAME:gradsync_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:gradsync_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -17,10 +17,3 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    preferIpAddress: true

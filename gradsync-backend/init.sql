@@ -12,6 +12,9 @@ CREATE DATABASE IF NOT EXISTS gradsync_job_db;
 -- 4. Post Service Database
 CREATE DATABASE IF NOT EXISTS gradsync_post_db;
 
+-- 5. Events Service Database
+CREATE DATABASE IF NOT EXISTS gradsync_events_db;
+
 -- 6. Notification Service Database
 CREATE DATABASE IF NOT EXISTS gradsync_notification_db;
 
@@ -24,6 +27,7 @@ GRANT ALL PRIVILEGES ON gradsync_auth_db.* TO 'gradsync_user'@'%';
 GRANT ALL PRIVILEGES ON gradsync_user_db.* TO 'gradsync_user'@'%';
 GRANT ALL PRIVILEGES ON gradsync_job_db.* TO 'gradsync_user'@'%';
 GRANT ALL PRIVILEGES ON gradsync_post_db.* TO 'gradsync_user'@'%';
+GRANT ALL PRIVILEGES ON gradsync_events_db.* TO 'gradsync_user'@'%';
 GRANT ALL PRIVILEGES ON gradsync_notification_db.* TO 'gradsync_user'@'%';
 GRANT ALL PRIVILEGES ON gradsync_stats_db.* TO 'gradsync_user'@'%';
 

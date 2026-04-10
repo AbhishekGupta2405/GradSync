@@ -14,7 +14,6 @@ public class RouteValidator {
             "/api/v1/auth/login",
             "/api/v1/auth/linkedin",
             "/api/v1/jobs",
-            "/api/v1/posts",
             "/api/v1/events",
             "/api/v1/profiles/public",
             "/eureka"

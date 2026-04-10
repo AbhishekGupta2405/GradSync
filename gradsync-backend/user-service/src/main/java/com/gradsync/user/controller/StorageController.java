@@ -21,8 +21,13 @@ public class StorageController {
             @RequestParam(value = "folder", defaultValue = "general") String folder
     ) {
         try {
-            String s3Url = s3Service.uploadFile(folder, file);
-            return ResponseEntity.ok(Map.of("url", s3Url));
+            String s3Key = s3Service.uploadFile(folder, file);
+            // Generate a pre-signed URL so the browser can directly load the media
+            String presignedUrl = s3Service.generatePresignedUrl(s3Key);
+            return ResponseEntity.ok(Map.of(
+                "url", presignedUrl != null ? presignedUrl : s3Key,
+                "s3Key", s3Key
+            ));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
