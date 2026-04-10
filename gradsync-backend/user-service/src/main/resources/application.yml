@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: user-service
+  
+  datasource:
+    # Connects to our central Docker database on port 3307 inside the gradsync_user_db namespace
+    url: jdbc:mysql://localhost:3307/gradsync_user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: gradsync_user
+    password: gradsync_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+server:
+  port: 8082 # Unique port for User Service. (Auth is 8081, BFF will be 8080)
+
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY_ID}
+    secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region: ${AWS_REGION}
+    bucket: ${AWS_S3_BUCKET_NAME}

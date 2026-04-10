@@ -1,0 +1,5 @@
+com\gradsync\events\EventsServiceApplication.class
+com\gradsync\events\controller\EventController.class
+com\gradsync\events\entity\Event$EventBuilder.class
+com\gradsync\events\repository\EventRepository.class
+com\gradsync\events\entity\Event.class

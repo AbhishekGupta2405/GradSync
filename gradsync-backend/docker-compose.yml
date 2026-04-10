@@ -1,0 +1,156 @@
+services:
+  # -------------------------------------------------------------------
+  # 1. Database (MySQL)
+  # Central database server containing separate schemas for each service
+  # -------------------------------------------------------------------
+  mysql-db:
+    image: mysql:8.0
+    container_name: gradsync-mysql
+    ports:
+      - "3307:3306"
+    env_file:
+      - .env
+    volumes:
+      # Persistent storage for database data
+      - mysql-data:/var/lib/mysql
+      # Initialization script to create all databases on first run
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - gradsync-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Auth Service
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: gradsync-auth
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_auth_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID}
+      - LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET}
+      - LINKEDIN_REDIRECT_URI=http://localhost:5173/auth/linkedin/callback
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+  # 3. User Service
+  user-service:
+    build:
+      context: ./user-service
+    container_name: gradsync-user
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_user_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+  # 4. API Gateway (BFF)
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: gradsync-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - user-service
+      - job-service
+      - post-service
+      - events-service
+      - stats-service
+    networks:
+      - gradsync-net
+
+  # 5. Job Service
+  job-service:
+    build:
+      context: ./job-service
+    container_name: gradsync-job
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_job_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=gradsync_user
+      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+  # 6. Post Service
+  post-service:
+    build:
+      context: ./post-service
+    container_name: gradsync-post
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_post_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=gradsync_user
+      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+
+
+  # 8. Events Service
+  events-service:
+    build:
+      context: ./events-service
+    container_name: gradsync-events
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_events_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=gradsync_user
+      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+  # 9. Stats Service
+  stats-service:
+    build:
+      context: ./stats-service
+    container_name: gradsync-stats
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/gradsync_stats_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=gradsync_user
+      - SPRING_DATASOURCE_PASSWORD=gradsync_password
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - gradsync-net
+
+
+volumes:
+  mysql-data:
+
+networks:
+  gradsync-net:
+    driver: bridge

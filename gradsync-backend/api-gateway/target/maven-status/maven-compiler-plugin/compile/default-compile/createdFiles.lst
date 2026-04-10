@@ -1,0 +1,5 @@
+com\gradsync\gateway\ApiGatewayApplication.class
+com\gradsync\gateway\filter\RouteValidator.class
+com\gradsync\gateway\util\JwtUtil.class
+com\gradsync\gateway\filter\AuthenticationFilter$Config.class
+com\gradsync\gateway\filter\AuthenticationFilter.class

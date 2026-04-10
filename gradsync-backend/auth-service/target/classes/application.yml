@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: auth-service
+  
+  datasource:
+    # Notice we connect to 'mysql-db' which is the docker host name for our database container
+    # From localhost, this would just be localhost:3307, but inside Docker they use the service name
+    url: jdbc:mysql://localhost:3307/gradsync_auth_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: gradsync_user
+    password: gradsync_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # Automatically creates/updates the database tables based on your Java entities!
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+server:
+  port: 8081 # Each service needs a unique port! Auth is 8081.
+
+linkedin:
+  client-id: ${LINKEDIN_CLIENT_ID:app_id}
+  client-secret: ${LINKEDIN_CLIENT_SECRET:app_secret}
+  redirect-uri: ${LINKEDIN_REDIRECT_URI:http://localhost:5173/auth/linkedin/callback}
+  authorization-url: https://www.linkedin.com/oauth/v2/authorization
+  token-url: https://www.linkedin.com/oauth/v2/accessToken
+  userinfo-url: https://api.linkedin.com/v2/userinfo
+  scopes: openid,profile,email

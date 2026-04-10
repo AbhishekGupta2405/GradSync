@@ -1,0 +1,7 @@
+com\gradsync\stats\StatsServiceApplication.class
+com\gradsync\stats\repository\AlumniSpotlightRepository.class
+com\gradsync\stats\entity\AlumniSpotlight.class
+com\gradsync\stats\repository\BatchStatRepository.class
+com\gradsync\stats\controller\StatsController.class
+com\gradsync\stats\entity\BatchStat.class
+com\gradsync\stats\service\StatsService.class
