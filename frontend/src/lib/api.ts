@@ -76,12 +76,12 @@ export const authAPI = {
     }),
     
   validateToken: () =>
-    apiRequest('/api/auth/validate', {
-      method: 'POST',
+    apiRequest('/api/v1/auth/validate', {
+      method: 'GET',
     }),
     
   getCurrentUser: () =>
-    apiRequest('/api/auth/me', {
+    apiRequest('/api/v1/profiles/me', {
       method: 'GET',
     }, true),
     
