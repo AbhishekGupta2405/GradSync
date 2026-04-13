@@ -7,7 +7,7 @@ export default function LoadingSpinner() {
       <div className="text-center">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" as const }}
           className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full mx-auto mb-4"
         />
         <div className="flex items-center justify-center space-x-3">

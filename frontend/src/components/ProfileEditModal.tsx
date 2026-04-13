@@ -59,7 +59,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
         certifications: source?.certifications || [],
         experiences: source?.experiences || []
       });
-      setProfileImage(source?.profileImage || source?.profileImageUrl || '');
+      setProfileImage(source?.profileImage || source?.profileImage || '');
     }
   }, [isOpen, profile, user]);
 

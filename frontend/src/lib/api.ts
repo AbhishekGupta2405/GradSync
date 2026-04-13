@@ -78,7 +78,6 @@ export const authAPI = {
   validateToken: () =>
     apiRequest('/api/auth/validate', {
       method: 'POST',
-      body: JSON.stringify({ token }),
     }),
     
   getCurrentUser: () =>

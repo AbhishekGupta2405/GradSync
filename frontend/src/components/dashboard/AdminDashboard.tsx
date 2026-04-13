@@ -40,8 +40,8 @@ export default function AdminDashboard() {
       setPending(pend || [])
       setStudents(stud || [])
       setAlumni(alum || [])
-      setJobs(jobsRes || [])
-      setEvents(eventsRes || [])
+      setJobs((jobsRes as any[]) || [])
+      setEvents((eventsRes as any[]) || [])
     } catch {
       toast.error("Failed to load dashboard data.")
     } finally {

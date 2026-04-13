@@ -73,12 +73,12 @@ export default function Feed() {
             return {
                ...c,
                authorName: cName || 'Unknown User',
-               authorAvatar: (cAuthor?.profileImageUrl || cAuthor?.profileImage) || `https://ui-avatars.com/api/?name=User&background=random`
+               authorAvatar: (cAuthor?.profileImage || cAuthor?.profileImage) || `https://ui-avatars.com/api/?name=User&background=random`
             }
          })
 
          const authorName = author ? `${author.firstName || ''} ${author.lastName || ''}`.trim() : 'Unknown User'
-         const authorAvatar = (author?.profileImageUrl || author?.profileImage) || `https://ui-avatars.com/api/?name=User&background=random&color=fff`
+         const authorAvatar = (author?.profileImage || author?.profileImage) || `https://ui-avatars.com/api/?name=User&background=random&color=fff`
          
          // Build position string from profile fields
          let authorPosition = 'GradSync Member'
