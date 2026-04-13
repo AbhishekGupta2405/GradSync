@@ -1,4 +1,17 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+// Initialize API URL safely
+// In production, we default to empty string (relative paths) so it hits NGINX on same-origin.
+// In development, we default to localhost:8080. 
+let defaultUrl = import.meta.env.DEV ? 'http://localhost:8080' : '';
+let rawApiUrl = import.meta.env.VITE_API_URL;
+
+// If VITE_API_URL is literally set to just "/", "/api", or is strictly undefined/empty string, handle it gracefully.
+if (rawApiUrl === '/' || rawApiUrl === '/api') {
+    rawApiUrl = '';
+}
+
+const API_BASE_URL = (rawApiUrl !== undefined && rawApiUrl !== null && rawApiUrl !== '') 
+    ? rawApiUrl.replace(/\/+$/, '') 
+    : defaultUrl;
 
 // Create basic headers
 const createHeaders = (): HeadersInit => {
