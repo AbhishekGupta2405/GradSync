@@ -34,7 +34,7 @@ export default function Events() {
   const fetchEvents = async () => {
     try {
       const data = await eventsAPI.getEvents() as any[]
-      const hydrated = data.map((e: any) => ({
+      const hydrated = Array.isArray(data) ? data.map((e: any) => ({
         ...e,
         organizer: {
           name: e.organizerName || 'GradSync Organizer',
@@ -45,7 +45,7 @@ export default function Events() {
         capacity: e.capacity || 100,
         price: e.price || 'Free',
         image: e.image || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=400&fit=crop'
-      }))
+      })) : []
       setEvents(hydrated)
       setFilteredEvents(hydrated)
     } catch (err) {
@@ -249,7 +249,7 @@ export default function Events() {
                 <div>
                   <h2 className="text-2xl font-bold mb-6">Featured Events</h2>
                   <div className="grid md:grid-cols-2 gap-8">
-                    {featuredEvents.map((event) => (
+                    {Array.isArray(featuredEvents) && featuredEvents.map((event) => (
                       <EventCard key={event.id} event={event} onRegister={handleRegister} onDelete={handleDeleteEvent} registering={registeringIds[event.id]} isRegistered={registeredCache[event.id]} isAdmin={user?.role === 'admin'} />
                     ))}
                   </div>
@@ -260,7 +260,7 @@ export default function Events() {
                  <div>
                    <h2 className="text-2xl font-bold mb-6">Upcoming Events</h2>
                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                     {regularEvents.map((event) => (
+                     {Array.isArray(regularEvents) && regularEvents.map((event) => (
                         <EventCard key={event.id} event={event} onRegister={handleRegister} onDelete={handleDeleteEvent} registering={registeringIds[event.id]} isRegistered={registeredCache[event.id]} isAdmin={user?.role === 'admin'} compact />
                      ))}
                    </div>

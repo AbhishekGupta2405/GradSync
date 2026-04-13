@@ -87,7 +87,7 @@ export default function AlumniSpotlight() {
           viewport={{ once: true }}
           className="grid lg:grid-cols-3 gap-8"
         >
-          {alumni.map((person, index) => (
+          {Array.isArray(alumni) && alumni.map((person, index) => (
             <motion.div
               key={index}
               variants={itemVariants}

@@ -63,7 +63,7 @@ export default function Feed() {
       
       // Hydrate with Real Authors
       // ProfileDto from backend returns userId, firstName, lastName, profileImageUrl, position, currentCompany, headline
-      const hydratedPosts = feedData.map((p: any) => {
+      const hydratedPosts = Array.isArray(feedData) ? feedData.map((p: any) => {
          const author = dirData.find((u: any) => (u.userId || u.id) === p.authorId)
          
          // Hydrate Comments
@@ -100,7 +100,7 @@ export default function Feed() {
            showComments: false,
            newCommentText: ''
          }
-      })
+      }) : []
       setPosts(hydratedPosts)
     } catch (error) {
       console.error('Failed to fetch feed:', error)
@@ -302,7 +302,7 @@ export default function Feed() {
               </div>
             ) : (
               <AnimatePresence>
-                {posts.map((post, i) => (
+                {Array.isArray(posts) && posts.map((post, i) => (
                   <motion.div 
                     key={post.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -431,7 +431,7 @@ export default function Feed() {
                            )}
 
                            {/* Rendered Comments */}
-                           {post.comments.map(c => (
+                           {Array.isArray(post.comments) && post.comments.map(c => (
                              <div key={c.id} className="flex space-x-3">
                                <img src={c.authorAvatar} className="w-8 h-8 rounded-full border border-gray-200 object-cover bg-white" alt="Avatar" />
                                <div className="flex-1 bg-gray-50 rounded-2xl rounded-tl-none px-4 py-2">
