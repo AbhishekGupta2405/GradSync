@@ -59,8 +59,18 @@ jobs:
             # Free up space before building (important on t2.micro)
             docker system prune -f
 
-            # Build and start all services
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+            # Build services sequentially to prevent RAM exhaustion on t2.micro
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build auth-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build user-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build job-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build post-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build events-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build stats-service
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build api-gateway
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build frontend
+
+            # Start all services
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
             # Print status
             echo "--- Container Status ---"
