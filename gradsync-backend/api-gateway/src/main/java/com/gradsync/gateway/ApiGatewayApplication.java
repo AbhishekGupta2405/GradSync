@@ -35,8 +35,21 @@ public class ApiGatewayApplication {
     public WebFilter corsFilter() {
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
             ctx.getResponse().beforeCommit(() -> {
-                if (ctx.getRequest().getHeaders().containsKey(HttpHeaders.ORIGIN)) {
-                    ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, corsAllowedOrigin);
+                String origin = ctx.getRequest().getHeaders().getFirst(HttpHeaders.ORIGIN);
+                if (origin != null) {
+                    String[] allowedOrigins = corsAllowedOrigin.split(",");
+                    boolean isAllowed = false;
+                    for (String allowed : allowedOrigins) {
+                        if (allowed.trim().equalsIgnoreCase(origin)) {
+                            isAllowed = true;
+                            break;
+                        }
+                    }
+                    if (isAllowed) {
+                        ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+                    } else {
+                        ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigins[0].trim());
+                    }
                     ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS, PATCH");
                     ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Content-Type, Authorization, X-Requested-With, Accept, Origin");
                     ctx.getResponse().getHeaders().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");

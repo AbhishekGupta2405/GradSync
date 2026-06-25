@@ -4,7 +4,7 @@ async function createAdmin() {
     // 1. Submit Credentials to Auth-Service
     const authPayload = { 
         email: 'abhishekgupta2405@gmail.com', 
-        password: 'Abhishek@0987', 
+        password: 'Kittu2401', 
         role: 'ADMIN' 
     };
     
@@ -51,7 +51,7 @@ async function createAdmin() {
     console.log("Global Admin Entity Fully Deployed successfully!");
     console.log("Login Credentials Active:");
     console.log("Email: abhishekgupta2405@gmail.com");
-    console.log("Password: Abhishek@0987");
+    console.log("Password: Kittu2401");
 }
 
 createAdmin().catch(console.error);
